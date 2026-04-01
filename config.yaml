@@ -1,0 +1,40 @@
+mavsdk:
+  action_timeout_sec: 12.0
+
+swarm:
+  control_rate_hz: 10.0
+  neighbor_range_m: 15.0
+  arrival_radius_m: 1.5
+  max_speed_mps: 3.0
+
+  # Weights from the paper model:
+  # v_i = v_sep + v_coh + v_ali + v_mig (+ leader/follower coupling)
+  k_sep: 1.3
+  k_coh: 0.25
+  k_ali: 0.35
+  k_mig: 0.75
+  k_follow: 0.8
+
+  # Lower value means stronger repulsion when close.
+  min_sep_distance_m: 1.8
+
+drones:
+  - name: drone_1
+    role: leader
+    mavlink_udp: "udp://:14540"
+    source_ned_m: [0.0, 0.0, -6.0]
+    destination_ned_m: [30.0, 20.0, -8.0]
+
+  - name: drone_2
+    role: follower
+    mavlink_udp: "udp://:14541"
+    source_ned_m: [-2.5, -2.0, -6.0]
+    destination_ned_m: [28.0, 18.0, -8.0]
+    desired_offset_from_leader_m: [-3.0, -3.0, 0.0]
+
+  - name: drone_3
+    role: follower
+    mavlink_udp: "udp://:14542"
+    source_ned_m: [2.5, -2.0, -6.0]
+    destination_ned_m: [32.0, 18.0, -8.0]
+    desired_offset_from_leader_m: [3.0, -3.0, 0.0]

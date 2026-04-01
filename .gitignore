@@ -1,0 +1,75 @@
+# PX4 Build Artifacts
+build/
+doxygen_documentation/
+*.elf
+*.bin
+*.hex
+*.o
+*.a
+*.so
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+*.egg-info/
+dist/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Compilation
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+*.cmake
+
+# ROS/Catkin
+devel/
+install/
+.catkin_workspace
+
+# Simulation
+*.bag
+*.rviz
+
+# Dependencies
+libs/
+external/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+.tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+*.exe
+*.dll
+*.dylib
+
+# GTest
+googletest/
+
