@@ -1,5 +1,9 @@
 mavsdk:
   action_timeout_sec: 12.0
+  connect_call_timeout_sec: 8.0
+
+logging:
+  log_every_n_cycles: 10
 
 swarm:
   control_rate_hz: 10.0
@@ -21,20 +25,23 @@ swarm:
 drones:
   - name: drone_1
     role: leader
-    mavlink_udp: "udp://:14540"
+    mavlink_udp: "udp://:14561"
+    mavsdk_server_port: 50051
     source_ned_m: [0.0, 0.0, -6.0]
     destination_ned_m: [30.0, 20.0, -8.0]
 
   - name: drone_2
     role: follower
-    mavlink_udp: "udp://:14541"
+    mavlink_udp: "udp://:14562"
+    mavsdk_server_port: 50052
     source_ned_m: [-2.5, -2.0, -6.0]
     destination_ned_m: [28.0, 18.0, -8.0]
     desired_offset_from_leader_m: [-3.0, -3.0, 0.0]
 
   - name: drone_3
     role: follower
-    mavlink_udp: "udp://:14542"
+    mavlink_udp: "udp://:14563"
+    mavsdk_server_port: 50053
     source_ned_m: [2.5, -2.0, -6.0]
     destination_ned_m: [32.0, 18.0, -8.0]
     desired_offset_from_leader_m: [3.0, -3.0, 0.0]

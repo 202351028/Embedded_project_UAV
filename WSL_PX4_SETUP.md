@@ -121,7 +121,7 @@ On PX4 v1.14, try the multi-vehicle Gazebo Classic launcher:
 
 ```bash
 cd ~/PX4-Autopilot
-./Tools/gazebo_sitl_multiple_run.sh -n 3 -m iris
+./Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 3 -m iris
 ```
 
 If that script is not present, search for the exact helper in your tree:
@@ -134,17 +134,19 @@ If you find a different script name, run it with the same `-n 3 -m iris` style a
 
 ## 7) Verify MAVLink UDP ports
 
-Open another WSL terminal and check that the simulator exposed the ports your controller expects:
+Open another WSL terminal and check UDP listeners after you start `main.py` (MAVSDK creates local listeners):
 
 ```bash
-ss -lun | grep -E "14540|14541|14542"
+ss -lun | grep -E "14561|14562|14563|14540|14541|14542|14543"
 ```
 
 Your swarm controller is configured to use:
 
-- leader: `udp://:14540`
-- follower 1: `udp://:14541`
-- follower 2: `udp://:14542`
+- leader: `udp://:14561`
+- follower 1: `udp://:14562`
+- follower 2: `udp://:14563`
+
+Note: some PX4 versions use 14540-series ports. The controller now auto-tries both 14560-series and 14540-series endpoints with timeout logs.
 
 If the ports differ, update `mavlink_udp` in `config.yaml`.
 
@@ -163,12 +165,14 @@ python3 main.py --config config.yaml
 
 Expected connection logs:
 
-- `[connect] drone_1 -> udp://:14540`
+- `[connect] drone_1 -> udp://:14561`
 - `[connected] drone_1`
-- `[connect] drone_2 -> udp://:14541`
+- `[connect] drone_2 -> udp://:14562`
 - `[connected] drone_2`
-- `[connect] drone_3 -> udp://:14542`
+- `[connect] drone_3 -> udp://:14563`
 - `[connected] drone_3`
+
+Detailed runtime diagnostics are written to `swarm_debug.log` in `px4_swarm_leader_follower`.
 
 ## 9) Suggested terminal layout
 
@@ -201,15 +205,16 @@ python3 -m venv .venv
 
 ### C) Controller stops at `[connect] drone_1`
 
-That means PX4 is not publishing on the port yet, or the simulator is not running.
+That means the first endpoint is reachable but follow-up endpoints are not matching your PX4 port mapping, or PX4 was not fully up.
 
 Check:
 
 ```bash
-ss -lun | grep -E "14540|14541|14542"
+ss -lun | grep -E "14561|14562|14563|14540|14541|14542|14543"
 ```
 
-If the ports are not listed, start the PX4 simulator again.
+If only one port appears, keep PX4 running and check controller logs for endpoint fallback warnings.
+Also inspect `swarm_debug.log` for `[warn] connect() timeout` or `[error]` lines to identify the exact failing endpoint.
 
 ### D) Gazebo freezes or feels too heavy
 

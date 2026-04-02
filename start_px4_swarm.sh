@@ -26,10 +26,13 @@ fi
 cd "$PX4_DIR"
 echo "Using PX4 path: $PX4_DIR"
 
-if [ -f "./Tools/simulation/gz/sitl_multiple_run.sh" ]; then
-	./Tools/simulation/gz/sitl_multiple_run.sh -n 3 -m x500
+if [ -f "./Tools/simulation/gazebo-classic/sitl_multiple_run.sh" ]; then
+	./Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 3 -m iris
+elif [ -f "./Tools/simulation/gz/sitl_multiple_run.sh" ]; then
+	./Tools/simulation/gz/sitl_multiple_run.sh -n 3 -m iris
 else
 	echo "sitl_multiple_run.sh not found for this PX4 version."
-	echo "Available files under Tools/simulation/gz/:"
-	ls ./Tools/simulation/gz/
+	echo "Available files under Tools/simulation/gazebo-classic/ and Tools/simulation/gz/:"
+	ls ./Tools/simulation/gazebo-classic/ 2>/dev/null || true
+	ls ./Tools/simulation/gz/ 2>/dev/null || true
 fi
