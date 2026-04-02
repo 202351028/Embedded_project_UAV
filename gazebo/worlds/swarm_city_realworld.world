@@ -1,0 +1,152 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="swarm_city_realworld">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <scene>
+      <ambient>0.68 0.68 0.68 1</ambient>
+      <background>0.82 0.90 0.96 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_update_rate>250</real_time_update_rate>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+
+    <model name="source_marker">
+      <static>true</static>
+      <pose>0.000 0.000 0.030 0 0 0</pose>
+      <link name="link">
+        <visual name="disc">
+          <geometry><cylinder><radius>2.1</radius><length>0.06</length></cylinder></geometry>
+          <material>
+            <ambient>0.10 0.70 0.20 0.85</ambient>
+            <diffuse>0.10 0.70 0.20 0.85</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="destination_marker">
+      <static>true</static>
+      <pose>30.000 20.000 0.030 0 0 0</pose>
+      <link name="link">
+        <visual name="disc">
+          <geometry><cylinder><radius>2.4</radius><length>0.06</length></cylinder></geometry>
+          <material>
+            <ambient>0.10 0.34 0.88 0.85</ambient>
+            <diffuse>0.10 0.34 0.88 0.85</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="leader_start_ring">
+      <static>true</static>
+      <pose>0.000 0.000 0.080 0 0 0</pose>
+      <link name="outer">
+        <visual name="outer_visual">
+          <geometry><cylinder><radius>3.2</radius><length>0.05</length></cylinder></geometry>
+          <material>
+            <ambient>0.92 0.74 0.08 0.45</ambient>
+            <diffuse>0.92 0.74 0.08 0.45</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+
+    <model name="zone_building_cluster_a">
+      <static>true</static>
+      <pose>8.000 16.000 4.000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>3.200</radius><length>8.000</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>3.200</radius><length>8.000</length></cylinder></geometry>
+          <material>
+            <ambient>0.74 0.22 0.16 0.95</ambient>
+            <diffuse>0.74 0.22 0.16 0.95</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="zone_tower_obstacle_b">
+      <static>true</static>
+      <pose>22.000 4.000 4.500 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>2.400</radius><length>9.000</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>2.400</radius><length>9.000</length></cylinder></geometry>
+          <material>
+            <ambient>0.74 0.22 0.16 0.95</ambient>
+            <diffuse>0.74 0.22 0.16 0.95</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="zone_obstacle_south">
+      <static>true</static>
+      <pose>16.000 -8.000 4.200 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>2.600</radius><length>8.400</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>2.600</radius><length>8.400</length></cylinder></geometry>
+          <material>
+            <ambient>0.74 0.22 0.16 0.95</ambient>
+            <diffuse>0.74 0.22 0.16 0.95</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="zone_threat_corridor_1">
+      <static>true</static>
+      <pose>30.000 12.000 1.000 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>4.200</radius><length>2.000</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>4.200</radius><length>2.000</length></cylinder></geometry>
+          <material>
+            <ambient>0.96 0.33 0.14 0.55</ambient>
+            <diffuse>0.96 0.33 0.14 0.55</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="zone_threat_corridor_2">
+      <static>true</static>
+      <pose>4.000 -10.000 1.200 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>3.600</radius><length>2.400</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>3.600</radius><length>2.400</length></cylinder></geometry>
+          <material>
+            <ambient>0.96 0.33 0.14 0.55</ambient>
+            <diffuse>0.96 0.33 0.14 0.55</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>

@@ -115,14 +115,29 @@ If this does not launch, run this to check available targets and scripts:
 find Tools -type f -name "*gazebo*" | head -n 50
 ```
 
-## 6) Launch 3 vehicles for your swarm
+## 6) Install custom swarm world (optional but recommended)
+
+```bash
+cd /mnt/d/IIITV/Semester_6/Embedded/px4_swarm_leader_follower
+chmod +x ./scripts/install_swarm_world.sh
+./scripts/install_swarm_world.sh
+```
+
+This installs `swarm_city_realworld.world` into PX4's world directory.
+
+## 7) Launch 3 vehicles for your swarm
 
 On PX4 v1.14, try the multi-vehicle Gazebo Classic launcher:
 
 ```bash
-cd ~/PX4-Autopilot
-./Tools/simulation/gazebo-classic/sitl_multiple_run.sh -n 3 -m iris
+cd /mnt/d/IIITV/Semester_6/Embedded/px4_swarm_leader_follower
+chmod +x ./start_px4_swarm.sh
+SWARM_WORLD=swarm_city_realworld ./start_px4_swarm.sh
 ```
+
+If your PX4 branch does not support world selection via `-w`, the script auto-falls back to default world launch.
+
+The launcher reads `config.yaml` to determine drone count and generates a close grid spawn layout automatically.
 
 If that script is not present, search for the exact helper in your tree:
 
@@ -132,7 +147,7 @@ find ~/PX4-Autopilot/Tools -type f -name "*multiple*run*.sh" 2>/dev/null
 
 If you find a different script name, run it with the same `-n 3 -m iris` style arguments.
 
-## 7) Verify MAVLink UDP ports
+## 8) Verify MAVLink UDP ports
 
 Open another WSL terminal and check UDP listeners after you start `main.py` (MAVSDK creates local listeners):
 
@@ -150,7 +165,7 @@ Note: some PX4 versions use 14540-series ports. The controller now auto-tries bo
 
 If the ports differ, update `mavlink_udp` in `config.yaml`.
 
-## 8) Install and run your swarm controller
+## 9) Install and run your swarm controller
 
 In the project folder:
 
@@ -174,13 +189,13 @@ Expected connection logs:
 
 Detailed runtime diagnostics are written to `swarm_debug.log` in `px4_swarm_leader_follower`.
 
-## 9) Suggested terminal layout
+## 10) Suggested terminal layout
 
 - Terminal 1: PX4 multi-vehicle Gazebo Classic launcher
 - Terminal 2: swarm controller (`python3 main.py --config config.yaml`)
 - Terminal 3: diagnostics (`ss`, `find`, log checks)
 
-## 10) Common problems and fixes
+## 11) Common problems and fixes
 
 ### A) `cd: ~/PX4-Autopilot: No such file or directory`
 
@@ -230,7 +245,7 @@ find ~/PX4-Autopilot/Tools -type f -name "*multiple*run*.sh" 2>/dev/null
 
 If needed, send that output and the launch command can be adjusted to your exact PX4 layout.
 
-## 11) Optional helper script
+## 12) Optional helper script
 
 If you want a one-command launcher, keep this script in your swarm project and run it from WSL:
 
