@@ -3,7 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_PATH="${SWARM_CONFIG:-$ROOT_DIR/config.yaml}"
-WORLD_SRC="$ROOT_DIR/gazebo/worlds/swarm_city_realworld.world"
+WORLD_NAME="${SWARM_WORLD:-swarm_city_realworld}"
+WORLD_SRC="$ROOT_DIR/gazebo/worlds/${WORLD_NAME}.world"
 
 if [ ! -f "$CONFIG_PATH" ]; then
   echo "Config file not found: $CONFIG_PATH"
@@ -51,4 +52,8 @@ fi
 
 cp "$WORLD_SRC" "$TARGET_DIR/swarm_city_realworld.world"
 
-echo "Installed world to: $TARGET_DIR/swarm_city_realworld.world"
+if [ "$WORLD_NAME" != "swarm_city_realworld" ]; then
+  cp "$WORLD_SRC" "$TARGET_DIR/${WORLD_NAME}.world"
+fi
+
+echo "Installed world to: $TARGET_DIR/${WORLD_NAME}.world"

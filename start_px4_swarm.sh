@@ -42,7 +42,7 @@ if [ -f "$ROOT_DIR/scripts/sync_world_from_config.py" ]; then
 fi
 
 if [ -f "$ROOT_DIR/scripts/install_swarm_world.sh" ]; then
-	SWARM_CONFIG="$CONFIG_PATH" PX4_DIR="$PX4_DIR" bash "$ROOT_DIR/scripts/install_swarm_world.sh"
+	SWARM_CONFIG="$CONFIG_PATH" SWARM_WORLD="$WORLD_NAME" PX4_DIR="$PX4_DIR" bash "$ROOT_DIR/scripts/install_swarm_world.sh"
 fi
 
 DRONE_COUNT="${SWARM_DRONE_COUNT:-}"
@@ -70,7 +70,7 @@ import yaml
 from pathlib import Path
 
 cfg = yaml.safe_load(Path(r"$CONFIG_PATH").read_text(encoding="utf-8"))
-drones = cfg.get("drones", [])[: int(r"$DRONE_COUNT")]
+drones = cfg.get("drones", [])
 if not drones:
     print("")
     raise SystemExit(0)
@@ -78,7 +78,7 @@ if not drones:
 leader = next((d for d in drones if str(d.get("role","")).lower() == "leader"), drones[0])
 sx, sy = leader.get("source_ned_m", [0.0, 0.0, -6.0])[:2]
 spacing = float(r"$GRID_SPACING")
-n = len(drones)
+n = int(r"$DRONE_COUNT")
 cols = max(1, int(math.ceil(math.sqrt(n))))
 rows = int(math.ceil(n / cols))
 
@@ -96,6 +96,15 @@ PY
 
 echo "Drone count: $DRONE_COUNT"
 echo "Grid spacing: $GRID_SPACING"
+
+RUNTIME_STATE_FILE="$ROOT_DIR/.swarm_runtime.env"
+cat > "$RUNTIME_STATE_FILE" <<EOF
+SWARM_DRONE_COUNT=$DRONE_COUNT
+SWARM_WORLD=$WORLD_NAME
+SWARM_MODEL=$MODEL_NAME
+SWARM_GRID_SPACING=$GRID_SPACING
+EOF
+echo "Wrote runtime state: $RUNTIME_STATE_FILE"
 
 # WSL commonly has no ALSA playback device. Disable audio to avoid OpenAL startup errors.
 if [ "${SWARM_DISABLE_AUDIO:-1}" = "1" ]; then

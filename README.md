@@ -62,6 +62,19 @@ If your PX4 version does not accept `-w`, the script auto-falls back to the defa
 
 `start_px4_swarm.sh` now auto-reads drone count from `config.yaml` and spawns vehicles in a centered close grid (not a line).
 
+Override example:
+
+```bash
+SWARM_DRONE_COUNT=6 SWARM_WORLD=swarm_city_realworld ./start_px4_swarm.sh
+```
+
+Quick checks (after launch):
+
+```bash
+grep -n "Drone count:" start_px4_swarm.sh
+grep -n "destination_marker" ~/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/worlds/swarm_city_realworld.world
+```
+
 ## 5) Run in WSL (after PX4+Gazebo multi-UAV is up)
 
 ```bash

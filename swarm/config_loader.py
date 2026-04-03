@@ -1,10 +1,36 @@
 from pathlib import Path
 from typing import List
+import os
 
 import numpy as np
 import yaml
 
 from .models import DroneConfig, SwarmConfig, SwarmParams, ZoneConfig
+
+
+def _read_runtime_count(config_path: Path) -> int | None:
+    env_count = os.getenv("SWARM_DRONE_COUNT", "").strip()
+    if env_count.isdigit() and int(env_count) > 0:
+        return int(env_count)
+
+    runtime_state = config_path.parent / ".swarm_runtime.env"
+    if not runtime_state.exists():
+        return None
+
+    try:
+        for line in runtime_state.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            if key.strip() == "SWARM_DRONE_COUNT":
+                value = value.strip()
+                if value.isdigit() and int(value) > 0:
+                    return int(value)
+    except Exception:
+        return None
+
+    return None
 
 
 def _fibonacci_sphere_offsets(count: int, radius: float) -> List[np.ndarray]:
@@ -86,6 +112,27 @@ def load_swarm_config(config_path: Path) -> SwarmConfig:
                 ),
             )
         )
+
+    requested_count = _read_runtime_count(config_path)
+    if requested_count is not None and requested_count > len(drone_cfgs):
+        template = next((d for d in drone_cfgs if d.role != "leader"), drone_cfgs[0])
+        last_udp_port = int(drone_cfgs[-1].mavlink_udp.split(":")[-1])
+        last_grpc = max(d.mavsdk_server_port for d in drone_cfgs)
+        base_len = len(drone_cfgs)
+
+        for idx in range(base_len, requested_count):
+            offset = idx - base_len + 1
+            drone_cfgs.append(
+                DroneConfig(
+                    name=f"drone_{idx + 1}",
+                    role="follower",
+                    mavlink_udp=f"udp://:{last_udp_port + offset}",
+                    mavsdk_server_port=last_grpc + offset,
+                    source_ned_m=template.source_ned_m.copy(),
+                    destination_ned_m=template.destination_ned_m.copy(),
+                    desired_offset_from_leader_m=np.zeros(3, dtype=float),
+                )
+            )
 
     leaders = [d.name for d in drone_cfgs if d.role == "leader"]
     if len(leaders) != 1:

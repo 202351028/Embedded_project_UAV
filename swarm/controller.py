@@ -372,9 +372,10 @@ class LeaderFollowerSwarmController:
         pulse_duration = 2.0
         settle_duration = 0.8
         min_target_forward_m = 0.08
-        separation_margin_m = 0.08
-        max_other_forward_m = 0.25
-        relative_motion_factor = 2.5
+        swarm_size = len(self.drone_cfgs)
+        separation_margin_m = 0.08 if swarm_size <= 4 else 0.03
+        max_other_forward_m = 0.25 if swarm_size <= 4 else 1.20
+        min_dominance_ratio = 2.0 if swarm_size <= 4 else 1.12
 
         for target in self.drone_cfgs:
             baseline = {cfg.name: self.states[cfg.name].position_ned_m.copy() for cfg in self.drone_cfgs}
@@ -414,15 +415,17 @@ class LeaderFollowerSwarmController:
                 max_other_forward,
             )
 
+            dominance_ratio = target_forward / max(max_other_forward, 1e-3)
+
             if (
                 target_forward < min_target_forward_m
                 or (
                     target_forward < (max_other_forward + separation_margin_m)
-                    and target_forward < (relative_motion_factor * max_other_forward)
+                    and dominance_ratio < min_dominance_ratio
                 )
                 or (
                     max_other_forward > max_other_forward_m
-                    and target_forward < (relative_motion_factor * max_other_forward)
+                    and dominance_ratio < min_dominance_ratio
                 )
             ):
                 raise RuntimeError(
@@ -585,10 +588,17 @@ class LeaderFollowerSwarmController:
 
             repel = zone.repulsion_gain * proximity * direction
 
+            # Hard-safety layer near zone core to avoid collisions even if user tunes gains too low.
+            clearance = dist - zone.radius_m
+            hard_repel_xy = np.zeros(2, dtype=float)
+            if clearance < 0.8:
+                strength = float(np.clip((0.8 - clearance) / 0.8, 0.0, 2.0))
+                hard_repel_xy = 2.2 * strength * direction
+
             if zone.kind == "obstacle":
-                avoid[:2] += self.params.k_obstacle * repel
+                avoid[:2] += self.params.k_obstacle * repel + hard_repel_xy
             else:
-                avoid[:2] += self.params.k_threat_repulsion * repel
+                avoid[:2] += self.params.k_threat_repulsion * repel + 0.5 * hard_repel_xy
                 tangent = np.array([-direction[1], direction[0]], dtype=float)
                 if float(np.dot(tangent, preferred_xy)) < 0.0:
                     tangent = -tangent

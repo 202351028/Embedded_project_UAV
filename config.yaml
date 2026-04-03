@@ -19,7 +19,7 @@ swarm:
   k_mig: 0.75
   k_follow: 0.8
   k_neighbor_response: 0.7
-  k_obstacle: 0.1
+  k_obstacle: 2.2
   k_threat_repulsion: 1.8
   k_threat_tangential: 1.15
   k_stationary_damping: 0.55
